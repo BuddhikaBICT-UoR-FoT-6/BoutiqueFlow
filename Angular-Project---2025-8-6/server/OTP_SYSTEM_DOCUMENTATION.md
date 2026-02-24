@@ -1,4 +1,4 @@
-# 📧 Email OTP Verification System
+# 📧 BoutiqueFlow Email OTP Verification System
 
 Complete guide for the email-based OTP verification system implemented for user registration, password reset, and future account management features.
 

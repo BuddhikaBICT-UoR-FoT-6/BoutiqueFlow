@@ -1,59 +1,78 @@
-# FirstProject
+# BoutiqueFlow (Digital Clothing Shop Management System)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.4.
+BoutiqueFlow is a comprehensive full-stack digital management platform designed to transition physical clothing shops into a robust online environment. It features a modern Angular frontend, a Node.js REST API, and a secure MongoDB backend.
 
-## Development server
+## 🚀 Tech Stack
 
-To start a local development server, run:
+- **Frontend:** Angular 20+, Chart.js, RxJS
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB (Mongoose ODM)
+- **Security:** Role-Based Access Control (RBAC), Email OTP (Nodemailer), JWT Authentication
+- **Utilities:** PDFKit (Invoice Generation), Multer (Image Uploads)
 
-```bash
-ng serve
-```
+## 📝 Project Overview (CV Entry)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Description
 
-## Code scaffolding
+**Engineered a full-stack digital management platform** to transition a physical clothing shop online, implementing strict role-based access control (RBAC) and Email OTP to secure staff and admin endpoints.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+**Developed a responsive Angular frontend** with a real-time dashboard, enabling staff to accurately track complex apparel inventory (sizes, colors, SKUs) while supporting concurrent customer shopping workflows.
 
-```bash
-ng generate component component-name
-```
+**Integrated payment gateways via a Node.js REST API** to process digital clothing sales, automating PDF invoice generation and triggering supplier restock notifications for low-inventory garments.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## ✨ Key Features
 
-## Building
+- **RBAC & OTP Security:** Secure login for Customers, Staff, and Admins with Email OTP verification.
+- **Inventory Management:** Precise tracking of stock levels by size (S/M/L/XL) and color with automated low-stock alerts.
+- **Real-time Analytics:** Advanced admin dashboard with sales trends, top products, and user metrics.
+- **Automated Workflows:** PDF invoice generation for customers and restock notifications for suppliers.
+- **E-commerce Ready:** Complete shopping cart, checkout process, and order history tracking.
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 🛠️ Getting Started
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Prerequisites
 
-## Running unit tests
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [MongoDB](https://www.mongodb.com/) (Local or Atlas)
+- Angular CLI (`npm install -g @angular/cli`)
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Installation
 
-```bash
-ng test
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/BuddhikaBICT-UoR-FoT-6/Angular-Project---2025-8-6.git
+   cd Angular-Project---2025-8-6
+   ```
 
-## Running end-to-end tests
+2. **Frontend Setup:**
+   ```bash
+   npm install
+   ```
 
-For end-to-end (e2e) testing, run:
+3. **Backend Setup:**
+   ```bash
+   cd server
+   npm install
+   # Create a .env file based on .env.example
+   npm start
+   ```
 
-```bash
-ng e2e
-```
+### Development Server
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Run `npm start` in the root directory to start the Angular development server.
+The application will be available at `http://localhost:4201/` (proxied to backend on `3000`).
 
-## Additional Resources
+## 📊 Scripts
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `npm run start`: Starts the Angular development server with proxy.
+- `npm run build`: Compiles the frontend for production.
+- `cd server && npm start`: Starts the backend API.
+- `cd server && npm run seed`: Populates the database with initial demo data.
+
+---
+
+*Verified and optimized for performance and professional deployment.*

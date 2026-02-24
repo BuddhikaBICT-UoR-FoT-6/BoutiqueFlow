@@ -1,4 +1,4 @@
-# API Documentation
+# BoutiqueFlow API Documentation
 
 ## Authentication
 
