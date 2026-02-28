@@ -301,8 +301,7 @@ export class Showroom {
             }))
           );
         }),
-        timeout({ first: 20000 }),
-        retry({ count: 1, delay: 1500 }),
+        timeout({ first: 60000 }),
         switchMap((vmState) => {
           const featured = vmState.featuredProducts || [];
           // Collect all product IDs to fetch reviews for
