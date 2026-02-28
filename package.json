@@ -1,4 +1,9 @@
 {
+  "name": "boutiqueflow-root",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm start --prefix Angular-Project---2025-8-6/server"
+  },
   "dependencies": {
     "pdfkit": "^0.17.2"
   }
