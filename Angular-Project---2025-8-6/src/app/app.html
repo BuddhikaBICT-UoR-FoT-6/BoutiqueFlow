@@ -1,179 +1,121 @@
-<div class="bg-glow bg-glow-1"></div>
-<div class="bg-glow bg-glow-2"></div>
-
-<nav class="main-nav">
-  <div class="nav-container">
-    <a routerLink="/" class="brand-link">
-      <h1>Clothing Store</h1>
+<div class="app-shell" [class.admin-layout]="isAdminRoute()">
+  <!-- Main Premium Navigation -->
+  <nav class="main-nav glass-panel" [class.scrolled]="false">
+    <a routerLink="/" class="nav-brand">
+      <h1 class="brand-font">ABD <span>Clothing</span></h1>
     </a>
-    <div class="nav-links">
-      <div class="nav-search" (focusin)="openSearch()" (keydown.escape)="closeSearch()">
-        <input type="search" class="nav-search-input" placeholder="Search products..." aria-label="Search products"
-          autocomplete="off" [formControl]="searchControl" />
 
-        <div class="nav-search-dropdown" *ngIf="searchOpen">
-          <ng-container *ngIf="searchResults$ | async as results">
-            <div class="nav-search-hint" *ngIf="searchControl.value.trim().length < 2">
-              Type at least 2 characters
+    <div class="nav-links" *ngIf="!isAdminRoute()">
+      <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a [routerLink]="['/']" [queryParams]="{sort: 'newest'}" class="nav-link">New Arrivals</a>
+      <a [routerLink]="['/']" [queryParams]="{category: 'Dresses'}" class="nav-link">Collections</a>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Search Bar -->
+      <div class="search-container" [class.open]="searchOpen">
+        <button class="icon-btn search-trigger" (click)="openSearch()">
+          <i class="fas fa-search"></i>
+        </button>
+        <div class="search-overlay" *ngIf="searchOpen" (click)="closeSearch()"></div>
+        <div class="search-dropdown glass-panel" *ngIf="searchOpen">
+          <input 
+            type="text" 
+            [formControl]="searchControl" 
+            placeholder="Search products..."
+            class="search-input"
+            #searchInput
+            (keyup.escape)="closeSearch()"
+          >
+          <div class="search-results" *ngIf="searchResults$ | async as results">
+            <div *ngFor="let p of results" (click)="goToProduct(p._id)" class="search-item">
+              <img [src]="p.images?.[0] || 'assets/placeholder.png'" alt="">
+              <div class="item-info">
+                <span class="item-name">{{p.name}}</span>
+                <span class="item-price">${{p.price}}</span>
+              </div>
             </div>
-
-            <button type="button" class="nav-search-item" *ngFor="let p of results" (mousedown)="goToProduct(p._id)">
-              <span class="name">{{ p.name }}</span>
-              <span class="price">{{ p.price | currency }}</span>
-            </button>
-
-            <div class="nav-search-empty" *ngIf="searchControl.value.trim().length >= 2 && results.length === 0">
-              No matches
+            <div *ngIf="results.length === 0 && searchControl.value.length >= 2" class="no-results">
+              No products found
             </div>
-          </ng-container>
+          </div>
         </div>
       </div>
 
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Showroom</a>
+      <!-- User Actions -->
+      <div class="user-menu">
+        <ng-container *ngIf="isLoggedIn(); else loginBtn">
+          <a [routerLink]="getDashboardRoute()" class="icon-btn" title="Dashboard">
+            <i class="fas fa-user-circle"></i>
+          </a>
+          <a routerLink="/cart" class="icon-btn cart-btn" title="Shopping Cart">
+            <i class="fas fa-shopping-bag"></i>
+          </a>
+          <button (click)="logout()" class="icon-btn" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </ng-container>
+        <ng-template #loginBtn>
+          <a routerLink="/login" class="btn-minimal">Sign In</a>
+        </ng-template>
+      </div>
 
-      <button type="button" class="theme-toggle" (click)="toggleTheme()"
-        [attr.aria-label]="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
-        <span *ngIf="theme === 'dark'">☀️</span>
-        <span *ngIf="theme === 'light'">🌙</span>
+      <!-- Theme Toggle -->
+      <button class="theme-toggle" (click)="toggleTheme()" [title]="'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode'">
+        <i class="fas" [class.fa-moon]="theme === 'light'" [class.fa-sun]="theme === 'dark'"></i>
       </button>
-
-      <!-- Role-based dashboards -->
-      <a *ngIf="isLoggedIn() && isAdmin()" class="nav-btn" routerLink="/admin/dashboard">Admin Dashboard</a>
-      <a *ngIf="isLoggedIn() && isSuperAdmin()" class="nav-btn" routerLink="/superadmin/dashboard">Super Admin</a>
-      <a *ngIf="isLoggedIn() && isCustomer()" class="nav-btn" routerLink="/customer/dashboard">My Dashboard</a>
-
-      <div *ngIf="!isLoggedIn()" class="auth-links">
-        <a routerLink="/login" routerLinkActive="active">Login</a>
-        <a routerLink="/register" routerLinkActive="active">Register</a>
-      </div>
-      <div *ngIf="isLoggedIn()" class="user-menu">
-        <span class="user-name">Welcome, {{getCurrentUser()?.full_name || getCurrentUser()?.email}}</span>
-        <button (click)="logout()" class="logout-btn">Logout</button>
-      </div>
     </div>
-  </div>
-</nav>
-
-<!-- Global toast notifications (purple theme) -->
-<app-toast></app-toast>
-
-<!-- Admin/SuperAdmin Sidebar (shows on admin or superadmin routes) -->
-<aside *ngIf="isAdminRoute()" class="admin-sidebar" [class.collapsed]="sidebarCollapsed"
-  (mouseenter)="onSidebarMouseEnter()" (mouseleave)="onSidebarMouseLeave()">
-
-  <!-- SuperAdmin Links -->
-  <nav *ngIf="isSuperAdmin()" class="sidebar-nav">
-    <a [routerLink]="getSidebarDashboardRoute()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-      class="sidebar-link">
-      <span class="link-icon">🏠</span>
-      <span class="link-text">Dashboard</span>
-    </a>
-    <a routerLink="/admin/orders" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🧾</span>
-      <span class="link-text">Orders</span>
-    </a>
-    <a routerLink="/admin/inventory" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">📦</span>
-      <span class="link-text">Inventory</span>
-    </a>
-    <a routerLink="/admin/restock-requests" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🔄</span>
-      <span class="link-text">Restock Requests</span>
-    </a>
-    <a routerLink="/admin/categories" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🏷️</span>
-      <span class="link-text">Categories</span>
-    </a>
-    <a routerLink="/admin/collections" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🛍️</span>
-      <span class="link-text">Collections</span>
-    </a>
-    <a routerLink="/admin/products" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">👕</span>
-      <span class="link-text">Products</span>
-    </a>
-    <a routerLink="/admin/users" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">👥</span>
-      <span class="link-text">Users</span>
-    </a>
-    <a routerLink="/admin/financials" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">💰</span>
-      <span class="link-text">Financials</span>
-    </a>
-    <a routerLink="/admin/reports" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">📤</span>
-      <span class="link-text">Reports</span>
-    </a>
-    <a routerLink="/admin/analytics" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">📈</span>
-      <span class="link-text">Analytics</span>
-    </a>
-    <a routerLink="/admin/admin-management" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🛡️</span>
-      <span class="link-text">Admin Management</span>
-    </a>
   </nav>
 
-  <!-- Regular Admin Links -->
-  <nav *ngIf="isAdmin()" class="sidebar-nav">
-    <a [routerLink]="getSidebarDashboardRoute()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-      class="sidebar-link">
-      <span class="link-icon">🏠</span>
-      <span class="link-text">Dashboard</span>
-    </a>
-    <a routerLink="/admin/orders" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🧾</span>
-      <span class="link-text">Orders</span>
-    </a>
-    <a routerLink="/admin/inventory" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">📦</span>
-      <span class="link-text">Inventory</span>
-    </a>
-    <a routerLink="/admin/categories" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🏷️</span>
-      <span class="link-text">Categories</span>
-    </a>
-    <a routerLink="/admin/collections" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">🛍️</span>
-      <span class="link-text">Collections</span>
-    </a>
-    <a routerLink="/admin/products" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">👕</span>
-      <span class="link-text">Products</span>
-    </a>
-    <a routerLink="/admin/users" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">👥</span>
-      <span class="link-text">Users</span>
-    </a>
-    <a routerLink="/admin/financials" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">💰</span>
-      <span class="link-text">Financials</span>
-    </a>
-    <a routerLink="/admin/reports" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">📤</span>
-      <span class="link-text">Reports</span>
-    </a>
-    <a routerLink="/admin/analytics" routerLinkActive="active" class="sidebar-link">
-      <span class="link-icon">📈</span>
-      <span class="link-text">Analytics</span>
-    </a>
-  </nav>
-</aside>
+  <!-- Sidebar for Admin Views -->
+  <aside 
+    class="admin-sidebar glass-panel" 
+    *ngIf="isAdminRoute()"
+    [class.collapsed]="sidebarCollapsed"
+    (mouseenter)="onSidebarMouseEnter()"
+    (mouseleave)="onSidebarMouseLeave()"
+  >
+    <div class="sidebar-header">
+      <div class="logo-circle">A</div>
+      <span class="admin-title">Admin <span>Hub</span></span>
+    </div>
 
-<main class="main-content reveal" [class.with-sidebar]="isAdminRoute()"
-  [class.sidebar-expanded]="isAdminRoute() && !sidebarCollapsed">
-  <div class="container">
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="side-link">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/products" routerLinkActive="active" class="side-link">
+        <i class="fas fa-tshirt"></i>
+        <span>Products</span>
+      </a>
+      <a routerLink="/admin/inventory" routerLinkActive="active" class="side-link">
+        <i class="fas fa-warehouse"></i>
+        <span>Inventory</span>
+      </a>
+      <a routerLink="/admin/orders" routerLinkActive="active" class="side-link">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Orders</span>
+      </a>
+      <a routerLink="/admin/financials" routerLinkActive="active" class="side-link">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <span>Financials</span>
+      </a>
+      <a routerLink="/admin/reports" routerLinkActive="active" class="side-link">
+        <i class="fas fa-file-alt"></i>
+        <span>Reports</span>
+      </a>
+      <a routerLink="/admin/analytics" routerLinkActive="active" class="side-link">
+        <i class="fas fa-rocket"></i>
+        <span>Analytics</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main [class.reveal]="true">
     <router-outlet></router-outlet>
-  </div>
-</main>
+  </main>
 
-<!-- Customer footer CTA (only when logged in as customer) -->
-<footer *ngIf="isLoggedIn() && isCustomer() && !isShowroomRoute()" class="shop-footer">
-  <div class="container footer-inner">
-    <div>
-      <div class="footer-title">Ready to start shopping?</div>
-      <div class="footer-sub">Browse new arrivals and manage your cart.</div>
-    </div>
-    <a routerLink="/" class="shop-cta">Go to Showroom</a>
-  </div>
-</footer>
+  <app-toast></app-toast>
+</div>
