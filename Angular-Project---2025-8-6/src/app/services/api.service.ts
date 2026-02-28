@@ -77,8 +77,8 @@ export class ApiService {
       if (value === undefined || value === null || value === '') continue;
       httpParams = httpParams.set(key, String(value));
     }
+    console.log(`🌐 Fetching products from: ${this.baseUrl}/products`);
     return this.http.get<any[]>(`${this.baseUrl}/products`, { params: httpParams });
-  }
   searchProducts(q: string, limit = 8): Observable<any[]> {
     const params = new HttpParams()
       .set('q', q || '')

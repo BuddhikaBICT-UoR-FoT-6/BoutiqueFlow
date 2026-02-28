@@ -36,7 +36,13 @@ app.use((req, res, next) => {
 });
 
 // Security Middleware
-app.use(cors()); // Permissive for debugging
+app.use(cors({
+  origin: true, // Allows all origins for now to solve the loading issue
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: false
