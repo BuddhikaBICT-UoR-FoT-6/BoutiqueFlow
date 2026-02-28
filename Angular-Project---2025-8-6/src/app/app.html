@@ -2,13 +2,13 @@
   <!-- Main Premium Navigation -->
   <nav class="main-nav glass-panel" [class.scrolled]="false">
     <a routerLink="/" class="nav-brand">
-      <h1 class="brand-font">ABD <span>Clothing</span></h1>
+      <h1 class="brand-font">Boutique<span>Flow</span></h1>
     </a>
 
     <div class="nav-links" *ngIf="!isAdminRoute()">
-      <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Shop</a>
       <a [routerLink]="['/']" [queryParams]="{sort: 'newest'}" class="nav-link">New Arrivals</a>
-      <a [routerLink]="['/']" [queryParams]="{category: 'Dresses'}" class="nav-link">Collections</a>
+      <a [routerLink]="['/']" [queryParams]="{category: 'Collections'}" class="nav-link">Journal</a>
     </div>
 
     <div class="nav-actions">
@@ -35,9 +35,6 @@
                 <span class="item-price">${{p.price}}</span>
               </div>
             </div>
-            <div *ngIf="results.length === 0 && searchControl.value.length >= 2" class="no-results">
-              No products found
-            </div>
           </div>
         </div>
       </div>
@@ -45,72 +42,24 @@
       <!-- User Actions -->
       <div class="user-menu">
         <ng-container *ngIf="isLoggedIn(); else loginBtn">
-          <a [routerLink]="getDashboardRoute()" class="icon-btn" title="Dashboard">
-            <i class="fas fa-user-circle"></i>
+          <a [routerLink]="getDashboardRoute()" class="icon-btn" title="Account">
+            <i class="fas fa-user"></i>
           </a>
-          <a routerLink="/cart" class="icon-btn cart-btn" title="Shopping Cart">
+          <a routerLink="/cart" class="icon-btn cart-btn" title="Cart">
             <i class="fas fa-shopping-bag"></i>
           </a>
-          <button (click)="logout()" class="icon-btn" title="Logout">
-            <i class="fas fa-sign-out-alt"></i>
-          </button>
         </ng-container>
         <ng-template #loginBtn>
-          <a routerLink="/login" class="btn-minimal">Sign In</a>
+          <a routerLink="/login" class="btn-minimal">Login</a>
         </ng-template>
       </div>
 
       <!-- Theme Toggle -->
-      <button class="theme-toggle" (click)="toggleTheme()" [title]="'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode'">
+      <button class="theme-toggle" (click)="toggleTheme()">
         <i class="fas" [class.fa-moon]="theme === 'light'" [class.fa-sun]="theme === 'dark'"></i>
       </button>
     </div>
   </nav>
-
-  <!-- Sidebar for Admin Views -->
-  <aside 
-    class="admin-sidebar glass-panel" 
-    *ngIf="isAdminRoute()"
-    [class.collapsed]="sidebarCollapsed"
-    (mouseenter)="onSidebarMouseEnter()"
-    (mouseleave)="onSidebarMouseLeave()"
-  >
-    <div class="sidebar-header">
-      <div class="logo-circle">A</div>
-      <span class="admin-title">Admin <span>Hub</span></span>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a routerLink="/admin/dashboard" routerLinkActive="active" class="side-link">
-        <i class="fas fa-chart-line"></i>
-        <span>Dashboard</span>
-      </a>
-      <a routerLink="/admin/products" routerLinkActive="active" class="side-link">
-        <i class="fas fa-tshirt"></i>
-        <span>Products</span>
-      </a>
-      <a routerLink="/admin/inventory" routerLinkActive="active" class="side-link">
-        <i class="fas fa-warehouse"></i>
-        <span>Inventory</span>
-      </a>
-      <a routerLink="/admin/orders" routerLinkActive="active" class="side-link">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Orders</span>
-      </a>
-      <a routerLink="/admin/financials" routerLinkActive="active" class="side-link">
-        <i class="fas fa-file-invoice-dollar"></i>
-        <span>Financials</span>
-      </a>
-      <a routerLink="/admin/reports" routerLinkActive="active" class="side-link">
-        <i class="fas fa-file-alt"></i>
-        <span>Reports</span>
-      </a>
-      <a routerLink="/admin/analytics" routerLinkActive="active" class="side-link">
-        <i class="fas fa-rocket"></i>
-        <span>Analytics</span>
-      </a>
-    </nav>
-  </aside>
 
   <!-- Main Content Area -->
   <main [class.reveal]="true">

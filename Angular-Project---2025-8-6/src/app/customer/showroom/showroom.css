@@ -1,288 +1,201 @@
-/* --- Showroom: Luxe Fashion Aesthetic --- */
+/* --- Showroom: Enhanced BoutiqueFlow Commercial Aesthetic --- */
 
 .showroom-container {
   padding-bottom: 5rem;
 }
 
+/* --- Announcement Bar --- */
+.announcement-bar {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+  padding: 0.6rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1001;
+}
+
+.announcement-bar .divider {
+  opacity: 0.3;
+}
+
 /* --- Hero Section --- */
 .hero-section {
-  height: 80vh;
+  height: 85vh;
   background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 0 2rem;
-  margin-bottom: 4rem;
-  background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=2000');
+  margin-bottom: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=2000');
   background-size: cover;
   background-position: center;
 }
 
-.hero-label {
-  display: block;
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-main);
+  padding: 0.8rem 2rem;
+  border: 1.5px solid var(--text-main);
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.3em;
-  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: var(--text-main);
+  color: var(--text-on-dark);
+}
+
+/* --- Service Highlights --- */
+.highlights-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 4rem 4rem;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.highlight-item i {
+  font-size: 1.5rem;
   color: var(--accent-gold);
-  margin-bottom: 1.5rem;
+}
+
+.h-text h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
   font-weight: 600;
 }
 
-.hero-title {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-}
-
-.hero-title span {
-  color: var(--accent-gold);
-  font-style: italic;
-}
-
-.hero-subtitle {
-  font-size: 1.1rem;
+.h-text p {
+  font-size: 0.8rem;
   color: var(--text-muted);
-  max-width: 600px;
-  margin: 0 auto 2.5rem;
 }
 
-/* --- Categories --- */
+/* --- Product Card Enhancements --- */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.stock-badge {
+  background: #fff0f0;
+  color: #d00000;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+}
+
+/* --- Newsletter Section --- */
+.newsletter-section {
+  padding: 6rem 4rem;
+  background: var(--bg-secondary);
+}
+
+.newsletter-content {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4rem;
+  border-radius: var(--radius-lg);
+}
+
+.n-text h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.n-text p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.n-form {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  max-width: 500px;
+}
+
+.n-form input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-main);
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.n-form .btn-primary {
+  white-space: nowrap;
+}
+
+/* Existing styles below... */
 .categories-section {
-  padding: 4rem 0;
-  border-top: 1px solid var(--border-color);
+  padding: 6rem 4rem;
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .categories-grid {
   display: flex;
   justify-content: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-
-.category-card {
-  text-align: center;
-  cursor: pointer;
-  width: 150px;
+  gap: 4rem;
 }
 
 .category-image-wrapper {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 auto 1rem;
-  border: 1px solid var(--border-color);
-  transition: all 0.4s ease;
+  margin-bottom: 1.5rem;
 }
 
-.category-image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.category-card:hover .category-image-wrapper {
-  transform: scale(1.05);
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 5px rgba(197, 160, 89, 0.1);
-}
-
-.category-card h3 {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-main);
-}
-
-/* --- Products Section --- */
 .products-section {
-  padding: 4rem 2rem;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 3rem;
-  max-width: var(--container-max);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.horizontal-scroll-container {
-  overflow-x: auto;
-  padding: 1rem 0 3rem;
-  cursor: grab;
-}
-
-.horizontal-scroll-container::-webkit-scrollbar {
-  height: 4px;
-}
-
-.products-flex {
-  display: flex;
-  gap: 2rem;
+  padding: 6rem 4rem;
 }
 
 .luxe-product-card {
-  min-width: 300px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: all 0.4s ease;
-}
-
-.image-box {
-  aspect-ratio: 3/4;
-  position: relative;
-  overflow: hidden;
-}
-
-.image-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.card-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.luxe-product-card:hover .card-overlay {
-  opacity: 1;
-}
-
-.luxe-product-card:hover img {
-  transform: scale(1.08);
-}
-
-.view-btn {
-  background: white;
-  color: black;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.info-box {
-  padding: 1.5rem;
-}
-
-.cat-tag {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.info-box h3 {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-}
-
-.price-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.price {
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.85rem;
-  color: var(--accent-gold);
-}
-
-/* --- Promo Banner --- */
-.promo-banner {
-  max-width: var(--container-max);
-  margin: 4rem auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 500px;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-}
-
-.promo-img {
-  background-size: cover;
-  background-position: center;
-}
-
-.promo-content {
-  padding: 4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--bg-secondary);
-}
-
-.promo-tag {
-  color: var(--accent-gold);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-.promo-content h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.promo-content p {
-  color: var(--text-muted);
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
-}
-
-/* Loading State */
-.loading-state {
-  text-align: center;
-  padding: 5rem 0;
-}
-
-.luxe-spinner {
-  width: 50px;
-  height: 50px;
-  border: 2px solid var(--border-color);
-  border-top-color: var(--accent-gold);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1.5rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+  min-width: 320px;
 }
