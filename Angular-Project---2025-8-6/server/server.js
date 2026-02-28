@@ -93,11 +93,13 @@ app.get('/', (req, res) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+  const isConnected = mongoose.connection.readyState === 1;
   res.json({
     status: 'ok',
+    dbReady: isConnected, // THIS FIXES THE FRONTEND TIMEOUT
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    mongodb: isConnected ? 'connected' : 'disconnected',
     dbName: mongoose.connection?.db?.databaseName
   });
 });
