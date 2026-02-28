@@ -8,7 +8,7 @@
                 <h1 class="hero-title">Elegance in <span>Every Detail</span></h1>
                 <p class="hero-subtitle">Experience the new standard of modern fashion with BoutiqueFlow.</p>
                 <div class="hero-actions">
-                    <button class="btn-primary" routerLink="/customer/showroom" [queryParams]="{sort: 'newest'}">Shop Collection</button>
+                    <button class="btn-primary" routerLink="/" [queryParams]="{sort: 'newest'}">Shop Collection</button>
                 </div>
             </div>
         </section>
@@ -19,7 +19,7 @@
                 <h2 class="section-title">Shop by Category</h2>
             </div>
             <div class="categories-grid">
-                <div *ngFor="let category of vm.categories" class="category-card" [routerLink]="['/customer/showroom']"
+                <div *ngFor="let category of vm.categories" class="category-card" [routerLink]="['/']"
                     [queryParams]="{ category: category.name }">
                     <div class="category-image-wrapper">
                         <img *ngIf="category.image" [src]="category.image" [alt]="category.name">
@@ -35,7 +35,7 @@
             <div class="section-header">
                 <h2 class="section-title">{{ vm.isFiltered ? vm.filterTitle : 'Our Favorites' }}</h2>
                 <div class="header-actions">
-                    <a *ngIf="vm.isFiltered" routerLink="/customer/showroom" class="btn-minimal">Clear Filters</a>
+                    <a *ngIf="vm.isFiltered" routerLink="/" class="btn-minimal">Clear Filters</a>
                     <button class="scroll-control" *ngIf="!vm.isFiltered && !vm.loading" (click)="toggleAutoScroll()">
                         <i class="fas" [class.fa-pause]="isAutoScrollActive" [class.fa-play]="!isAutoScrollActive"></i>
                     </button>
@@ -87,7 +87,7 @@
             <div class="section-header">
                 <h2 class="section-title">New Arrivals</h2>
                 <div class="header-actions">
-                    <button class="btn-minimal" [routerLink]="['/customer/showroom']" [queryParams]="{sort: 'newest'}">View All</button>
+                    <button class="btn-minimal" [routerLink]="['/']" [queryParams]="{sort: 'newest'}">View All</button>
                 </div>
             </div>
             
@@ -113,7 +113,7 @@
                 <span class="promo-tag">Featured Collection</span>
                 <h2>{{vm.featuredCol.name}}</h2>
                 <p>{{vm.featuredCol.description || 'Discover our curated selection of premium pieces designed for the modern individual.'}}</p>
-                <button class="btn-primary" [routerLink]="['/customer/showroom']" [queryParams]="{ collection: vm.featuredCol.slug }">Explore Now</button>
+                <button class="btn-primary" [routerLink]="['/']" [queryParams]="{ collection: vm.featuredCol.slug }">Explore Now</button>
             </div>
         </section>
 
