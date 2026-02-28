@@ -1,5 +1,4 @@
 {
-  "$schema": "https://railway.app/standard-schema.json",
   "build": {
     "builder": "NIXPACKS"
   },
