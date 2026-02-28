@@ -204,20 +204,22 @@ main {
 
 /* Theme Toggle */
 .theme-toggle {
-  background: none;
-  border: 1px solid var(--border-color);
+  background: var(--text-main);
+  border: none;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  color: var(--text-main);
+  color: var(--bg-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .theme-toggle:hover {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold);
+  transform: rotate(15deg) scale(1.1);
+  background: var(--accent-gold);
+  color: white;
 }
