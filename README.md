@@ -251,12 +251,15 @@ For support, please open an issue in the GitHub repository or contact the develo
 
 ## 📈 Version History
 
-- **v1.0.0** (February 2026)
-  - Initial release
-  - Financial management module
-  - Admin dashboard
-  - Backend API implementation
-  - Revenue and P&L reporting
+### v1.1.0 (February 2026)
+- **UI Modernization**: Premium Cyber-Purple aesthetic with Outfit font.
+- **Glassmorphism**: Advanced translucent effects and mesh glows.
+- **Micro-interactions**: Entrance animations and refined hover states.
+- **Documentation**: Added CHANGELOG and LICENSE.
+
+### v1.0.0 (February 2026)
+- Initial release with financial management and admin dashboard.
+- Revenue and P&L reporting.
 
 ---
 

@@ -4,9 +4,21 @@
   left: 0;
   right: 0;
   z-index: 50;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px);
   background: var(--nav-bg);
   border-bottom: 1px solid var(--nav-border);
+  transition: all 0.3s ease;
+}
+
+.main-nav::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.5;
 }
 
 .nav-container {
@@ -29,9 +41,12 @@
 
 .nav-container h1 {
   margin: 0;
-  font-size: 1.5rem;
-  color: var(--text);
-  letter-spacing: 0.2px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
 }
 
 .nav-links {
@@ -85,28 +100,38 @@
 
 .nav-search-input {
   width: 260px;
-  height: 45px;
-  border-radius: 10px;
-  padding: 0 12px;
-  border: 1px solid var(--border-strong);
-  background: rgba(255, 255, 255, 0.08);
+  height: 42px;
+  border-radius: var(--radius-sm);
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-search-input:focus {
+  width: 320px;
+  background: rgba(0, 0, 0, 0.4);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--focus);
 }
 
 .nav-search-dropdown {
   position: absolute;
   right: 0;
-  top: calc(100% + 10px);
-  width: 360px;
-  max-height: 360px;
+  top: calc(100% + 15px);
+  width: 380px;
+  max-height: 400px;
   overflow: auto;
-  border-radius: 12px;
-  border: 1px solid var(--nav-border);
-  background: var(--nav-bg);
-  backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-2);
+  backdrop-filter: blur(25px);
   z-index: 60;
-  padding: 8px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  animation: modalSlideIn 0.3s ease-out;
 }
 
 .nav-search-item {
@@ -115,22 +140,27 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
   border: 0;
   background: transparent;
-  color: rgba(233, 213, 255, 0.92);
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .nav-search-item:hover {
-  background: rgba(196, 167, 255, 0.12);
+  background: var(--surface-2);
+  color: var(--text);
+  transform: translateX(4px);
 }
 
 .nav-search-hint,
 .nav-search-empty {
-  padding: 10px;
-  color: rgba(233, 213, 255, 0.78);
+  padding: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .auth-links {
@@ -202,7 +232,9 @@
 /* Admin Sidebar */
 .admin-sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #6f42c1 0%, #5a32a3 100%);
+  background: rgba(9, 6, 20, 0.7);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid var(--border);
   color: white;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: fixed;
@@ -210,26 +242,14 @@
   left: 0;
   bottom: 0;
   overflow-y: auto;
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
   z-index: 45;
   scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE/Edge */
-}
-
-.admin-sidebar::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Opera */
-}
-
-.admin-sidebar:hover {
-  background: linear-gradient(180deg, rgba(111, 66, 193, 0.5) 0%, rgba(90, 50, 163, 0.5) 100%);
-  backdrop-filter: blur(10px);
 }
 
 .admin-sidebar.collapsed {
-  width: 70px;
+  width: 80px;
+  background: rgba(9, 6, 20, 0.9);
 }
 
 .sidebar-nav {
@@ -243,30 +263,27 @@
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
-  margin-bottom: 5px;
-  color: rgba(255, 255, 255, 0.9);
+  gap: 14px;
+  padding: 14px 18px;
+  margin: 4px 8px;
+  color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s;
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
   font-weight: 500;
   white-space: nowrap;
 }
 
-.admin-sidebar.collapsed .sidebar-link {
-  justify-content: center;
-  padding: 12px 8px;
-}
-
 .sidebar-link:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--purple-300);
+  transform: translateX(5px);
 }
 
 .sidebar-link.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: linear-gradient(90deg, rgba(124, 58, 237, 0.2) 0%, transparent 100%);
+  color: var(--text);
+  border-left: 3px solid var(--accent);
 }
 
 .link-icon {

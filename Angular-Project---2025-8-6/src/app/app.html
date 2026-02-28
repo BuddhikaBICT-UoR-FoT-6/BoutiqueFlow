@@ -1,3 +1,6 @@
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
 <nav class="main-nav">
   <div class="nav-container">
     <a routerLink="/" class="brand-link">
@@ -157,7 +160,7 @@
   </nav>
 </aside>
 
-<main class="main-content" [class.with-sidebar]="isAdminRoute()"
+<main class="main-content reveal" [class.with-sidebar]="isAdminRoute()"
   [class.sidebar-expanded]="isAdminRoute() && !sidebarCollapsed">
   <div class="container">
     <router-outlet></router-outlet>
