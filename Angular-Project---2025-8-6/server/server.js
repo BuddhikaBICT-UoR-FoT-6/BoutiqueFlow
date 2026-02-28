@@ -134,7 +134,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log('📧 Email service: ' + (process.env.EMAIL_USER ? 'PRODUCTION MODE' : 'DEVELOPMENT MODE (console logging only)'));
   console.log(`🚀 Server running on port ${PORT}`);
   console.log('📚 API Documentation: server/API_DOCUMENTATION.md');
