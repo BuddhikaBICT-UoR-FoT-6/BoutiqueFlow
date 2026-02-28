@@ -235,8 +235,7 @@ export class Showroom {
     filterTitle?: string;
   }> {
     return defer(() =>
-      this.apiService.waitForDbReady(120000).pipe(
-        delay(500),
+      of(null).pipe(
         switchMap(() => this.route.queryParams),
         switchMap((params) => {
           const category = params['category'];
