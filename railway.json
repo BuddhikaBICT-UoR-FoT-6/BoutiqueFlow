@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.app/standard-schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "rootDirectory": "Angular-Project---2025-8-6/server",
+    "healthCheckPath": "/api/health",
+    "healthCheckTimeout": 120
+  }
+}
