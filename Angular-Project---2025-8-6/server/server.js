@@ -24,10 +24,16 @@ const analyticsRoutes = require('./routes/analytics.routes');
 const supplierRoutes = require('./routes/supplier.routes');
 
 const app = express();
-
 // Security Middleware
-app.use(helmet()); // Secure HTTP headers (XSS, Content-Security-Policy, etc)
-app.use(cors()); // Configure CORS as needed
+app.use(cors({
+  origin: ['https://abdclothingstore.netlify.app', 'http://localhost:4200', 'http://localhost:4201'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 
 // Rate Limiting on authentication routes to prevent brute-force attacks
 const authLimiter = rateLimit({
