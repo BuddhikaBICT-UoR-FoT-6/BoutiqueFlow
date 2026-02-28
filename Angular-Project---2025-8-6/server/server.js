@@ -24,15 +24,18 @@ const analyticsRoutes = require('./routes/analytics.routes');
 const supplierRoutes = require('./routes/supplier.routes');
 
 const app = express();
+
+// Request Logging for debugging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.get('origin')}`);
+  next();
+});
+
 // Security Middleware
-app.use(cors({
-  origin: ['https://abdclothingstore.netlify.app', 'http://localhost:4200', 'http://localhost:4201'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.use(cors()); // Permissive for debugging
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false
 }));
 
 // Rate Limiting on authentication routes to prevent brute-force attacks
