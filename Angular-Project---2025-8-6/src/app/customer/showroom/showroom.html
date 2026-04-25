@@ -1,54 +1,14 @@
 <ng-container *ngIf="vm$ | async as vm">
     <div class="showroom-container">
 
-        <!-- Announcement Bar -->
-        <div class="announcement-bar">
-            <span>✨ Free express shipping on orders over $150</span>
-            <span class="divider">|</span>
-            <span>Join our membership for 15% off</span>
-        </div>
-
         <!-- Hero Section: Premium Minimalism -->
         <section class="hero-section" *ngIf="!vm.isFiltered">
             <div class="hero-content reveal">
-                <span class="hero-label">Curated Fashion</span>
-                <h1 class="hero-title">Elevate Your <span>Everyday Flow</span></h1>
-                <p class="hero-subtitle">Modern essentials designed for the way you move. Discover the BoutiqueFlow collection.</p>
+                <span class="hero-label">Seasonal Selection</span>
+                <h1 class="hero-title">Elegance in <span>Every Detail</span></h1>
+                <p class="hero-subtitle">Experience the new standard of modern fashion with ABD Clothing.</p>
                 <div class="hero-actions">
-                    <button class="btn-primary" routerLink="/customer/showroom" [queryParams]="{sort: 'newest'}">Shop the New Drop</button>
-                    <button class="btn-outline" routerLink="/customer/showroom">Our Story</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Service Highlights -->
-        <section class="highlights-section" *ngIf="!vm.isFiltered">
-            <div class="highlight-item">
-                <i class="fas fa-shipping-fast"></i>
-                <div class="h-text">
-                    <h4>Fast Delivery</h4>
-                    <p>Express worldwide shipping</p>
-                </div>
-            </div>
-            <div class="highlight-item">
-                <i class="fas fa-undo"></i>
-                <div class="h-text">
-                    <h4>Easy Returns</h4>
-                    <p>30-day return policy</p>
-                </div>
-            </div>
-            <div class="highlight-item">
-                <i class="fas fa-lock"></i>
-                <div class="h-text">
-                    <h4>Secure Payment</h4>
-                    <p>100% encrypted checkout</p>
-                </div>
-            </div>
-            <div class="highlight-item">
-                <i class="fas fa-headset"></i>
-                <div class="h-text">
-                    <h4>24/7 Support</h4>
-                    <p>Dedicated customer care</p>
+                    <button class="btn-primary" routerLink="/customer/showroom" [queryParams]="{sort: 'newest'}">Shop Collection</button>
                 </div>
             </div>
         </section>
@@ -56,7 +16,7 @@
         <!-- Categories: Elegant Circular Previews -->
         <section class="categories-section" *ngIf="!vm.isFiltered && vm.categories?.length">
             <div class="section-header">
-                <h2 class="section-title">Explore Categories</h2>
+                <h2 class="section-title">Shop by Category</h2>
             </div>
             <div class="categories-grid">
                 <div *ngFor="let category of vm.categories" class="category-card" [routerLink]="['/customer/showroom']"
@@ -70,10 +30,10 @@
             </div>
         </section>
 
-        <!-- Featured Products -->
+        <!-- Featured Products: Horizontal Scroll with Luxury Cards -->
         <section class="products-section">
             <div class="section-header">
-                <h2 class="section-title">{{ vm.isFiltered ? vm.filterTitle : 'Best Sellers' }}</h2>
+                <h2 class="section-title">{{ vm.isFiltered ? vm.filterTitle : 'Our Favorites' }}</h2>
                 <div class="header-actions">
                     <a *ngIf="vm.isFiltered" routerLink="/customer/showroom" class="btn-minimal">Clear Filters</a>
                     <button class="scroll-control" *ngIf="!vm.isFiltered && !vm.loading" (click)="toggleAutoScroll()">
@@ -103,14 +63,11 @@
                         <div class="image-box">
                             <img [src]="product.image?.[0] || 'assets/placeholder.png'" [alt]="product.name">
                             <div class="card-overlay">
-                                <span class="view-btn">Quick View</span>
+                                <span class="view-btn">View Details</span>
                             </div>
                         </div>
                         <div class="info-box">
-                            <div class="card-meta">
-                                <span class="cat-tag">{{product.category || 'New Season'}}</span>
-                                <span class="stock-badge" *ngIf="product.stock <= 5">Low Stock</span>
-                            </div>
+                            <span class="cat-tag">{{product.category || 'Collection'}}</span>
                             <h3>{{product.name}}</h3>
                             <div class="price-row">
                                 <span class="price">${{ (product.price || 0) | number:'1.2-2' }}</span>
@@ -125,17 +82,14 @@
             </div>
         </section>
 
-        <!-- Newsletter Section -->
-        <section class="newsletter-section" *ngIf="!vm.isFiltered">
-            <div class="newsletter-content glass-panel">
-                <div class="n-text">
-                    <h2>Join the Flow</h2>
-                    <p>Subscribe for early access to drops and exclusive offers.</p>
-                </div>
-                <div class="n-form">
-                    <input type="email" placeholder="Enter your email address">
-                    <button class="btn-primary">Subscribe</button>
-                </div>
+        <!-- Promotional Banner -->
+        <section class="promo-banner glass-panel" *ngIf="!vm.isFiltered && vm.featuredCol">
+            <div class="promo-img" [style.backgroundImage]="'url(' + (vm.featuredCol.image || '') + ')'"></div>
+            <div class="promo-content">
+                <span class="promo-tag">Featured Collection</span>
+                <h2>{{vm.featuredCol.name}}</h2>
+                <p>{{vm.featuredCol.description}}</p>
+                <button class="btn-primary" [routerLink]="['/customer/showroom']" [queryParams]="{ collection: vm.featuredCol.slug }">Explore Now</button>
             </div>
         </section>
 
