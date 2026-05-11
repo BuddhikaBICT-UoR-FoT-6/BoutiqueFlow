@@ -1,119 +1,154 @@
+<a href="#main-content" class="skip-link">Skip to content</a>
+
 <div class="app-shell" [class.admin-layout]="isAdminRoute()">
-  <!-- Main Premium Navigation -->
-  <nav class="main-nav glass-panel" [class.scrolled]="false">
-    <a routerLink="/" class="nav-brand">
-      <h1 class="brand-font">Boutique<span>Flow</span></h1>
+
+  <!-- ── NAVBAR ─────────────────────────────────────── -->
+  <nav class="main-nav" [class.scrolled]="isScrolled" role="navigation" aria-label="Main navigation">
+
+    <a routerLink="/" class="nav-brand" aria-label="BoutiqueFlow home">
+      <h1>Boutique<span>Flow</span></h1>
     </a>
 
-    <div class="nav-links" *ngIf="!isAdminRoute()">
-      <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-      <a [routerLink]="['/']" [queryParams]="{sort: 'newest'}" class="nav-link">New Arrivals</a>
-      <a [routerLink]="['/']" [queryParams]="{category: 'Dresses'}" class="nav-link">Collections</a>
-    </div>
+    <ul class="nav-links" *ngIf="!isAdminRoute()">
+      <li><a routerLink="/" class="nav-link" routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+      <li><a [routerLink]="['/']" [queryParams]="{sort: 'newest'}" class="nav-link">New Arrivals</a></li>
+      <li><a [routerLink]="['/']" [queryParams]="{category: 'Dresses'}" class="nav-link">Collections</a></li>
+    </ul>
 
     <div class="nav-actions">
-      <!-- Search Bar -->
-      <div class="search-container" [class.open]="searchOpen">
-        <button class="icon-btn search-trigger" (click)="openSearch()">
-          <i class="fas fa-search"></i>
+
+      <!-- Search -->
+      <div class="search-container">
+        <button class="icon-btn" (click)="openSearch()" aria-label="Search products" id="search-trigger">
+          <i class="fas fa-search" aria-hidden="true"></i>
         </button>
+
         <div class="search-overlay" *ngIf="searchOpen" (click)="closeSearch()"></div>
-        <div class="search-dropdown glass-panel" *ngIf="searchOpen">
-          <input 
-            type="text" 
-            [formControl]="searchControl" 
-            placeholder="Search products..."
-            class="search-input"
-            #searchInput
-            (keyup.escape)="closeSearch()"
-          >
+
+        <div class="search-dropdown glass-panel" *ngIf="searchOpen" role="dialog" aria-label="Product search">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              [formControl]="searchControl"
+              placeholder="Search products…"
+              class="search-input"
+              #searchInput
+              (keyup.escape)="closeSearch()"
+              (keyup.enter)="onSearchSubmit()"
+              aria-label="Search products"
+              autofocus
+            >
+            <button class="search-submit-btn" (click)="onSearchSubmit()" aria-label="Submit search">
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+
           <div class="search-results" *ngIf="searchResults$ | async as results">
-            <div *ngFor="let p of results" (click)="goToProduct(p._id)" class="search-item">
-              <img [src]="p.images?.[0] || 'assets/placeholder.png'" alt="">
+            <div *ngFor="let p of results" (click)="goToProduct(p._id)" class="search-item" role="button" tabindex="0">
+              <img [src]="p.images?.[0] || p.image?.[0] || 'assets/placeholder.png'" [alt]="p.name" loading="lazy">
               <div class="item-info">
                 <span class="item-name">{{p.name}}</span>
-                <span class="item-price">${{p.price}}</span>
+                <span class="item-price">${{p.price | number:'1.2-2'}}</span>
               </div>
             </div>
             <div *ngIf="results.length === 0 && searchControl.value.length >= 2" class="no-results">
-              No products found
+              No products found for "{{searchControl.value}}"
             </div>
           </div>
         </div>
       </div>
 
-      <!-- User Actions -->
+      <!-- User actions -->
       <div class="user-menu">
         <ng-container *ngIf="isLoggedIn(); else loginBtn">
-          <a [routerLink]="getDashboardRoute()" class="icon-btn" title="Dashboard">
-            <i class="fas fa-user-circle"></i>
+          <a [routerLink]="getDashboardRoute()" class="icon-btn" title="My Account" aria-label="My account">
+            <i class="fas fa-user" aria-hidden="true"></i>
           </a>
-          <a routerLink="/cart" class="icon-btn cart-btn" title="Shopping Cart">
-            <i class="fas fa-shopping-bag"></i>
+          <a routerLink="/cart" class="icon-btn cart-btn" title="Shopping Cart" aria-label="Shopping cart">
+            <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+            <span class="cart-count" *ngIf="cartCount() > 0" aria-label="{{cartCount()}} items in cart">
+              {{cartCount()}}
+            </span>
           </a>
-          <button (click)="logout()" class="icon-btn" title="Logout">
-            <i class="fas fa-sign-out-alt"></i>
+          <button (click)="logout()" class="icon-btn" title="Log out" aria-label="Log out">
+            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
           </button>
         </ng-container>
         <ng-template #loginBtn>
-          <a routerLink="/login" class="btn-minimal">Sign In</a>
+          <a routerLink="/login" class="sign-in-link">Sign In</a>
         </ng-template>
       </div>
 
-      <!-- Theme Toggle -->
-      <button class="theme-toggle" (click)="toggleTheme()" [title]="'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode'">
-        <i class="fas" [class.fa-moon]="theme === 'light'" [class.fa-sun]="theme === 'dark'"></i>
+      <!-- Theme toggle -->
+      <button class="theme-toggle"
+              (click)="toggleTheme()"
+              [title]="'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode'"
+              [attr.aria-label]="'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode'">
+        <i class="fas" [class.fa-moon]="theme === 'light'" [class.fa-sun]="theme === 'dark'" aria-hidden="true"></i>
+        <span>{{theme === 'dark' ? 'Light' : 'Dark'}}</span>
       </button>
+
     </div>
   </nav>
 
-  <!-- Sidebar for Admin Views -->
-  <aside 
-    class="admin-sidebar glass-panel" 
+  <!-- ── ADMIN SIDEBAR ─────────────────────────────── -->
+  <aside
+    class="admin-sidebar"
     *ngIf="isAdminRoute()"
     [class.collapsed]="sidebarCollapsed"
     (mouseenter)="onSidebarMouseEnter()"
     (mouseleave)="onSidebarMouseLeave()"
+    aria-label="Admin navigation"
   >
     <div class="sidebar-header">
-      <div class="logo-circle">A</div>
+      <div class="logo-circle" aria-hidden="true">A</div>
       <span class="admin-title">Admin <span>Hub</span></span>
     </div>
 
-    <nav class="sidebar-nav">
-      <a routerLink="/admin/dashboard" routerLinkActive="active" class="side-link">
-        <i class="fas fa-chart-line"></i>
-        <span>Dashboard</span>
+    <nav class="sidebar-nav" aria-label="Admin sections">
+      <a routerLink="/admin/dashboard"      routerLinkActive="active" class="side-link" title="Dashboard">
+        <i class="fas fa-chart-line" aria-hidden="true"></i><span>Dashboard</span>
       </a>
-      <a routerLink="/admin/products" routerLinkActive="active" class="side-link">
-        <i class="fas fa-tshirt"></i>
-        <span>Products</span>
+      <a routerLink="/admin/products"       routerLinkActive="active" class="side-link" title="Products">
+        <i class="fas fa-tshirt" aria-hidden="true"></i><span>Products</span>
       </a>
-      <a routerLink="/admin/inventory" routerLinkActive="active" class="side-link">
-        <i class="fas fa-warehouse"></i>
-        <span>Inventory</span>
+      <a routerLink="/admin/inventory"      routerLinkActive="active" class="side-link" title="Inventory">
+        <i class="fas fa-boxes" aria-hidden="true"></i><span>Inventory</span>
       </a>
-      <a routerLink="/admin/orders" routerLinkActive="active" class="side-link">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Orders</span>
+      <a routerLink="/admin/orders"         routerLinkActive="active" class="side-link" title="Orders">
+        <i class="fas fa-shopping-cart" aria-hidden="true"></i><span>Orders</span>
       </a>
-      <a routerLink="/admin/financials" routerLinkActive="active" class="side-link">
-        <i class="fas fa-file-invoice-dollar"></i>
-        <span>Financials</span>
+      <a routerLink="/admin/financials"     routerLinkActive="active" class="side-link" title="Financials">
+        <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i><span>Financials</span>
       </a>
-      <a routerLink="/admin/reports" routerLinkActive="active" class="side-link">
-        <i class="fas fa-file-alt"></i>
-        <span>Reports</span>
+      <a routerLink="/admin/reports"        routerLinkActive="active" class="side-link" title="Reports">
+        <i class="fas fa-file-alt" aria-hidden="true"></i><span>Reports</span>
       </a>
-      <a routerLink="/admin/analytics" routerLinkActive="active" class="side-link">
-        <i class="fas fa-rocket"></i>
-        <span>Analytics</span>
+      <a routerLink="/admin/analytics"      routerLinkActive="active" class="side-link" title="Analytics">
+        <i class="fas fa-rocket" aria-hidden="true"></i><span>Analytics</span>
+      </a>
+      <a routerLink="/admin/users"          routerLinkActive="active" class="side-link" title="Users">
+        <i class="fas fa-users" aria-hidden="true"></i><span>Users</span>
+      </a>
+      <a routerLink="/admin/categories"     routerLinkActive="active" class="side-link" title="Categories">
+        <i class="fas fa-tags" aria-hidden="true"></i><span>Categories</span>
+      </a>
+      <a routerLink="/admin/collections"    routerLinkActive="active" class="side-link" title="Collections">
+        <i class="fas fa-layer-group" aria-hidden="true"></i><span>Collections</span>
+      </a>
+      <a routerLink="/admin/suppliers"      routerLinkActive="active" class="side-link" title="Suppliers">
+        <i class="fas fa-truck" aria-hidden="true"></i><span>Suppliers</span>
+      </a>
+      <a routerLink="/admin/restock-requests" routerLinkActive="active" class="side-link" title="Restock">
+        <i class="fas fa-clipboard-list" aria-hidden="true"></i><span>Restock</span>
       </a>
     </nav>
   </aside>
 
-  <!-- Main Content Area -->
-  <main [class.reveal]="true">
+  <!-- ── MAIN CONTENT ──────────────────────────────── -->
+  <main id="main-content" tabindex="-1">
     <router-outlet></router-outlet>
   </main>
 
