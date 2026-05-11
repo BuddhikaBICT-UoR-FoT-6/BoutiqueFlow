@@ -1,122 +1,232 @@
 <ng-container *ngIf="vm$ | async as vm">
-    <div class="showroom-container">
+  <div class="showroom-container">
 
-        <!-- Hero Section: Premium Minimalism -->
-        <section class="hero-section" *ngIf="!vm.isFiltered">
-            <div class="hero-content reveal">
-                <span class="hero-label">Seasonal Selection</span>
-                <h1 class="hero-title">Elegance in <span>Every Detail</span></h1>
-                <p class="hero-subtitle">Experience the new standard of modern fashion with BoutiqueFlow.</p>
-                <div class="hero-actions">
-                    <button class="btn-primary" routerLink="/" [queryParams]="{sort: 'newest'}">Shop Collection</button>
-                </div>
-            </div>
-        </section>
+    <!-- ── HERO ────────────────────────────────────────────── -->
+    <section class="showroom-hero" *ngIf="!vm.isFiltered" aria-label="Hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <span class="hero-eyebrow">Seasonal Selection 2025</span>
 
-        <!-- Categories: Elegant Circular Previews -->
-        <section class="categories-section" *ngIf="!vm.isFiltered && vm.categories?.length">
-            <div class="section-header">
-                <h2 class="section-title">Shop by Category</h2>
-            </div>
-            <div class="categories-grid">
-                <div *ngFor="let category of vm.categories" class="category-card" [routerLink]="['/']"
-                    [queryParams]="{ category: category.name }">
-                    <div class="category-image-wrapper">
-                        <img *ngIf="category.image" [src]="category.image" [alt]="category.name">
-                        <div *ngIf="!category.image" class="cat-placeholder">🧥</div>
-                    </div>
-                    <h3>{{category.name}}</h3>
-                </div>
-            </div>
-        </section>
+          <h1 class="hero-headline">
+            Dressed for<br>
+            <em>Every Moment</em>
+          </h1>
 
-        <!-- Featured Products: Horizontal Scroll with Luxury Cards -->
-        <section class="products-section">
-            <div class="section-header">
-                <h2 class="section-title">{{ vm.isFiltered ? vm.filterTitle : 'Our Favorites' }}</h2>
-                <div class="header-actions">
-                    <a *ngIf="vm.isFiltered" routerLink="/" class="btn-minimal">Clear Filters</a>
-                    <button class="scroll-control" *ngIf="!vm.isFiltered && !vm.loading" (click)="toggleAutoScroll()">
-                        <i class="fas" [class.fa-pause]="isAutoScrollActive" [class.fa-play]="!isAutoScrollActive"></i>
-                    </button>
-                </div>
-            </div>
+          <p class="hero-subline">
+            Discover clothing that fits your life — curated pieces for the
+            modern individual who values quality without compromise.
+          </p>
 
-            <div *ngIf="vm.loading" class="loading-state">
-                <div class="luxe-spinner"></div>
-                <p>Curating your experience...</p>
-            </div>
+          <div class="hero-cta-group">
+            <button class="btn btn-primary btn-lg" routerLink="/" [queryParams]="{sort: 'newest'}">
+              Shop New Arrivals
+            </button>
+            <button class="btn btn-ghost" routerLink="/" [queryParams]="{category: 'Dresses'}">
+              Browse Collections
+            </button>
+          </div>
+        </div>
 
-            <div *ngIf="!vm.loading && vm.featuredProducts.length === 0" class="no-products glass-panel">
-                <h3>Our collection is being refreshed</h3>
-                <p>Check back soon for the latest arrivals.</p>
-            </div>
+        <div class="hero-image-grid" aria-hidden="true">
+          <div class="hero-img-main">
+            <img
+              src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=600"
+              alt="Fashion editorial"
+              loading="eager"
+            >
+          </div>
+          <div class="hero-img-secondary">
+            <img
+              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=400"
+              alt="Curated style"
+              loading="lazy"
+            >
+          </div>
+          <div class="hero-img-secondary">
+            <img
+              src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=400"
+              alt="Boutique collection"
+              loading="lazy"
+            >
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <div *ngIf="!vm.loading && vm.featuredProducts.length > 0" class="horizontal-scroll-container" #featuredScrollContainer>
-                <div [ngClass]="vm.isFiltered ? 'products-grid' : 'products-flex'" 
-                     (mousedown)="!vm.isFiltered && onDragStart($event)" 
-                     (mousemove)="!vm.isFiltered && onDrag($event)"
-                     (mouseup)="!vm.isFiltered && onDragEnd()" 
-                     (mouseleave)="!vm.isFiltered && onDragEnd()">
-                    
-                    <div *ngFor="let product of vm.featuredProducts" class="luxe-product-card" [routerLink]="['/product', product._id]">
-                        <div class="image-box">
-                            <img [src]="product.image?.[0] || 'assets/placeholder.png'" [alt]="product.name">
-                            <div class="card-overlay">
-                                <span class="view-btn">View Details</span>
-                            </div>
-                        </div>
-                        <div class="info-box">
-                            <span class="cat-tag">{{product.category || 'Collection'}}</span>
-                            <h3>{{product.name}}</h3>
-                            <div class="price-row">
-                                <span class="price">${{ (product.price || 0) | number:'1.2-2' }}</span>
-                                <div class="rating" *ngIf="getReviewCount(product._id) > 0">
-                                    <i class="fas fa-star"></i>
-                                    <span>{{ getAverageRating(product._id) | number : '1.1-1' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- ── CATEGORY CHIPS ─────────────────────────────────── -->
+    <section class="category-section container" *ngIf="!vm.isFiltered && vm.categories?.length" aria-label="Categories">
+      <div class="section-header">
+        <div>
+          <p class="section-eyebrow">Browse</p>
+          <h2 class="section-title">Shop by Category</h2>
+        </div>
+      </div>
 
-        <!-- New Arrivals Section -->
-        <section class="products-section" *ngIf="!vm.isFiltered && vm.newArrivals?.length">
-            <div class="section-header">
-                <h2 class="section-title">New Arrivals</h2>
-                <div class="header-actions">
-                    <button class="btn-minimal" [routerLink]="['/']" [queryParams]="{sort: 'newest'}">View All</button>
-                </div>
+      <div class="category-scroll" role="list">
+        <button
+          *ngFor="let cat of vm.categories"
+          class="category-chip"
+          [class.active]="activeCategory === cat.name"
+          (click)="filterByCategory(cat.name)"
+          role="listitem"
+          [attr.aria-label]="'Browse ' + cat.name"
+        >
+          <div class="category-thumb">
+            <img *ngIf="cat.image" [src]="cat.image" [alt]="cat.name" loading="lazy">
+            <div *ngIf="!cat.image" class="category-thumb-placeholder" aria-hidden="true">
+              <i class="fas fa-tshirt"></i>
             </div>
-            
-            <div class="horizontal-scroll-container">
-                <div class="products-flex">
-                    <div *ngFor="let product of vm.newArrivals" class="luxe-product-card small-card" [routerLink]="['/product', product._id]">
-                        <div class="image-box">
-                            <img [src]="product.image?.[0] || 'assets/placeholder.png'" [alt]="product.name">
-                        </div>
-                        <div class="info-box">
-                            <h3>{{product.name}}</h3>
-                            <span class="price">${{ (product.price || 0) | number:'1.2-2' }}</span>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <span class="category-label">{{cat.name}}</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ── PRODUCTS ────────────────────────────────────────── -->
+    <section class="products-section container" aria-label="Products">
+
+      <!-- Search result banner -->
+      <div class="search-result-banner" *ngIf="vm.searchQuery">
+        <p>Showing results for <strong>"{{vm.searchQuery}}"</strong></p>
+        <a routerLink="/" class="btn-minimal">Clear search</a>
+      </div>
+
+      <div class="products-header">
+        <div>
+          <p class="section-eyebrow" *ngIf="!vm.isFiltered">Curated</p>
+          <h2 class="section-title">
+            {{ vm.isFiltered ? vm.filterTitle : 'Our Favorites' }}
+          </h2>
+        </div>
+
+        <div style="display:flex;gap:var(--sp-3);align-items:center">
+          <!-- Filter chips (max 8 — Hick's Law) -->
+          <div class="filter-bar" *ngIf="!vm.isFiltered">
+            <button
+              *ngFor="let vibe of vibeFilters.slice(0, 8)"
+              class="filter-chip"
+              [class.active]="activeVibe === vibe"
+              (click)="setVibeFilter(vibe)"
+            >{{vibe}}</button>
+          </div>
+
+          <select class="sort-select" [(ngModel)]="sortOrder" (change)="onSortChange()" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+          </select>
+
+          <a *ngIf="vm.isFiltered" routerLink="/" class="btn-minimal">Clear Filters</a>
+        </div>
+      </div>
+
+      <!-- Skeleton loaders (Shneiderman feedback) -->
+      <div class="skeleton-grid" *ngIf="vm.loading" aria-live="polite" aria-busy="true">
+        <div *ngFor="let s of [1,2,3,4,5,6]" class="skeleton skeleton-card" role="presentation"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!vm.loading && vm.featuredProducts.length === 0" class="empty-state no-products">
+        <div class="empty-icon" aria-hidden="true"><i class="fas fa-search"></i></div>
+        <h3>Nothing found</h3>
+        <p>We couldn't find any products matching your selection.</p>
+        <a routerLink="/" class="btn btn-ghost">Browse everything</a>
+      </div>
+
+      <!-- Product grid -->
+      <div
+        *ngIf="!vm.loading && vm.featuredProducts.length > 0"
+        class="products-grid"
+        aria-live="polite"
+      >
+        <article
+          *ngFor="let product of vm.featuredProducts; trackBy: trackById"
+          class="product-card"
+          [routerLink]="['/product', product._id]"
+          role="article"
+          [attr.aria-label]="product.name + ', $' + (product.price | number:'1.2-2')"
+          tabindex="0"
+          (keyup.enter)="navigateToProduct(product._id)"
+        >
+          <div class="image-wrapper">
+            <img
+              [src]="product.image?.[0] || product.images?.[0] || 'assets/placeholder.png'"
+              [alt]="product.name"
+              loading="lazy"
+            >
+            <div class="card-overlay" aria-hidden="true">
+              <span class="view-btn">View Details</span>
             </div>
-        </section>
+          </div>
 
-        <!-- Promotional Banner (Featured Collection) -->
-        <section class="promo-banner glass-panel" *ngIf="!vm.isFiltered && vm.featuredCol">
-            <div class="promo-img" [style.backgroundImage]="'url(' + (vm.featuredCol.image || 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=1000') + ')'"></div>
-            <div class="promo-content">
-                <span class="promo-tag">Featured Collection</span>
-                <h2>{{vm.featuredCol.name}}</h2>
-                <p>{{vm.featuredCol.description || 'Discover our curated selection of premium pieces designed for the modern individual.'}}</p>
-                <button class="btn-primary" [routerLink]="['/']" [queryParams]="{ collection: vm.featuredCol.slug }">Explore Now</button>
+          <div class="card-info">
+            <span class="card-category">{{product.category || 'Collection'}}</span>
+            <h3 class="card-name">{{product.name}}</h3>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--sp-1)">
+              <span class="card-price">${{(product.price || 0) | number:'1.2-2'}}</span>
+              <div class="vibe-tags">
+                <!-- Max 3 vibe tags per card — Miller's Law -->
+                <span *ngFor="let tag of getVibeTags(product).slice(0,3)" class="vibe-chip">{{tag}}</span>
+              </div>
             </div>
-        </section>
+          </div>
+        </article>
+      </div>
+    </section>
 
+    <!-- ── NEW ARRIVALS ────────────────────────────────────── -->
+    <section class="arrivals-section" *ngIf="!vm.isFiltered && vm.newArrivals?.length" aria-label="New arrivals">
+      <div class="section-header container">
+        <div>
+          <p class="section-eyebrow">Fresh In</p>
+          <h2 class="section-title">New Arrivals</h2>
+        </div>
+        <button class="btn-minimal" routerLink="/" [queryParams]="{sort: 'newest'}">View All</button>
+      </div>
 
-    </div>
+      <div class="arrivals-scroll" role="list">
+        <article
+          *ngFor="let product of vm.newArrivals; trackBy: trackById"
+          class="product-card"
+          [routerLink]="['/product', product._id]"
+          role="listitem"
+          [attr.aria-label]="product.name"
+          tabindex="0"
+        >
+          <div class="image-wrapper">
+            <img
+              [src]="product.image?.[0] || product.images?.[0] || 'assets/placeholder.png'"
+              [alt]="product.name"
+              loading="lazy"
+            >
+          </div>
+          <div class="card-info">
+            <span class="card-category">{{product.category}}</span>
+            <h3 class="card-name">{{product.name}}</h3>
+            <span class="card-price">${{(product.price || 0) | number:'1.2-2'}}</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── PROMO BANNER ────────────────────────────────────── -->
+    <section
+      class="promo-banner"
+      *ngIf="!vm.isFiltered && vm.featuredCol"
+      aria-label="Featured collection"
+    >
+      <p class="section-eyebrow" style="color:var(--accent)">Featured Collection</p>
+      <h2>{{vm.featuredCol.name}}</h2>
+      <p>{{vm.featuredCol.description || 'Discover our curated selection of premium pieces designed for the modern individual.'}}</p>
+      <button
+        class="btn btn-accent btn-lg"
+        [routerLink]="['/']"
+        [queryParams]="{ collection: vm.featuredCol.slug }"
+      >
+        Explore Collection
+      </button>
+    </section>
+
+  </div>
 </ng-container>
