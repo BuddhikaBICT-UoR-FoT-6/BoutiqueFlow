@@ -21,7 +21,7 @@ function generateCommitMessage(filePath) {
 
 try {
   const statusOutput = execSync('git status --porcelain -uall').toString();
-  const lines = statusOutput.split('\n').map(l => l.trim()).filter(Boolean);
+  const lines = statusOutput.split('\n').filter(Boolean);
   
   let ps1Content = '';
 
