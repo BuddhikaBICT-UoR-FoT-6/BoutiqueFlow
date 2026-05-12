@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { ReviewService } from '../../services/review.service';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -26,7 +27,7 @@ import {
 
 @Component({
   selector: 'app-showroom',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './showroom.html',
   styleUrl: './showroom.css'
 })
@@ -72,10 +73,15 @@ export class Showroom {
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-  categories = ['Shirts', 'Pants', 'Dresses', 'Accessories'];
+  // Vibe filter categories (max 8 — Hick's Law)
+  vibeFilters = ['New', 'Sale', 'Casual', 'Formal', 'Summer', 'Premium', 'Minimalist', 'Bold'];
+  activeCategory = '';
+  activeVibe = '';
+  sortOrder = 'featured';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private authService: AuthService,
     private toast: ToastService,
@@ -361,7 +367,61 @@ export class Showroom {
     return [1, 2, 3, 4, 5].map((n) => n <= filled);
   }
 
-  refresh() {
+  /** Track by for ngFor performance */
+  trackById(_: number, item: any): string {
+    return item._id || item.id || _;
+  }
+
+  /** Navigate imperatively (keyboard support) */
+  navigateToProduct(id: string): void {
+    this.router.navigate(['/product', id]);
+  }
+
+  /** Return vibe tags derived from product data */
+  getVibeTags(product: any): string[] {
+    const tags: string[] = [];
+    if (product.isNew || product.createdAt) {
+      const d = new Date(product.createdAt);
+      const diffDays = (Date.now() - d.getTime()) / 86400000;
+      if (diffDays < 30) tags.push('New');
+    }
+    if (product.salePrice && product.salePrice < product.price) tags.push('Sale');
+    if (product.category) tags.push(product.category);
+    if (product.collection) tags.push(product.collection);
+    if (product.tags && Array.isArray(product.tags)) tags.push(...product.tags);
+    return [...new Set(tags)].slice(0, 3); // max 3 — Miller's Law
+  }
+
+  /** Filter products by category via router */
+  filterByCategory(category: string): void {
+    this.activeCategory = this.activeCategory === category ? '' : category;
+    if (this.activeCategory) {
+      this.router.navigate(['/'], { queryParams: { category: this.activeCategory } });
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  /** Vibe filter (client-side, decorative) */
+  setVibeFilter(vibe: string): void {
+    this.activeVibe = this.activeVibe === vibe ? '' : vibe;
+  }
+
+  /** Sort change handler */
+  onSortChange(): void {
+    if (this.sortOrder === 'featured') {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/'], { queryParams: { sort: this.sortOrder } });
+    }
+  }
+
+  /** Expose searchQuery from route params */
+  get searchQuery(): string {
+    return '';
+  }
+
+  refresh(): void {
     this.refreshTrigger$.next();
   }
 }
