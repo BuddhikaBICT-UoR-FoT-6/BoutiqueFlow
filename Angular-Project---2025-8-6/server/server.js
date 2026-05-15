@@ -70,26 +70,20 @@ cloudinary.config({
 const mongoURI = process.env.MONGO_URI;
 
 if (!mongoURI) {
-  console.error('❌ Missing MONGO_URI. This project is configured to use an online MongoDB only.');
-  console.error('   Set MONGO_URI in server/.env to your MongoDB Atlas (or other remote) connection string.');
-  process.exit(1);
+  console.warn('⚠️ Missing MONGO_URI. Using local mongodb fallback.');
 }
 
-if (/mongodb:\/\/localhost|mongodb:\/\/127\.0\.0\.1|@localhost|@127\.0\.0\.1/i.test(mongoURI)) {
-  console.error('❌ Refusing to start: MONGO_URI points to a local MongoDB instance.');
-  console.error('   Please use your online MongoDB connection string in server/.env.');
-  process.exit(1);
-}
+const finalMongoURI = mongoURI || 'mongodb://127.0.0.1:27017/boutiqueflow';
 
 mongoose
-  .connect(mongoURI)
+  .connect(finalMongoURI)
   .then(() => {
     const dbName = mongoose.connection?.db?.databaseName;
     console.log(`✅ MongoDB Connected${dbName ? ` (db: ${dbName})` : ''}`);
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB connection error:', err.message);
+    console.log('Server will continue running, but DB-dependent routes will fail.');
   });
 
 // Ping route (Root)
