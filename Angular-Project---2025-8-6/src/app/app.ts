@@ -1,33 +1,57 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, HostListener, OnInit, inject } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
+import { CartService } from './services/cart.service';
+import { ApiService } from './services/api.service';
 import { Toast } from './shared/toast/toast';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs';
-import { ApiService } from './services/api.service';
-import { catchError, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, startWith, switchMap, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  // Global imports for the root shell (nav + router outlet + toasts)
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, Toast, ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('First_Project');
-  sidebarCollapsed = true; // Start collapsed, show only on hover
+export class App implements OnInit {
+  protected readonly title = signal('BoutiqueFlow');
+  sidebarCollapsed = true;
+  isScrolled = false;
 
   theme: 'dark' | 'light' = 'dark';
-  private readonly THEME_KEY = 'theme';
+  private readonly THEME_KEY = 'bf_theme';
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private apiService: ApiService
-  ) {
+  searchControl = new FormControl('', { nonNullable: true });
+  searchOpen = false;
+
+  private authService = inject(AuthService);
+  private router      = inject(Router);
+  private cartService = inject(CartService);
+  private apiService = inject(ApiService);
+
+  /** Cart item count from signal */
+  cartCount = this.cartService.itemCount;
+
+  /** Live search results */
+  searchResults$ = this.searchControl.valueChanges.pipe(
+    startWith(this.searchControl.value),
+    debounceTime(220),
+    distinctUntilChanged(),
+    switchMap((raw) => {
+      const q = (raw || '').trim();
+      if (q.length < 2) return of([]);
+      return this.apiService.searchProducts(q, 8).pipe(catchError(() => of([])));
+    })
+  );
+
+  ngOnInit(): void {
     this.initTheme();
+  }
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.isScrolled = window.scrollY > 24;
   }
 
   private initTheme(): void {
@@ -36,11 +60,9 @@ export class App {
       this.setTheme(saved as 'light' | 'dark');
       return;
     }
-
     const prefersLight = typeof window !== 'undefined'
       && typeof window.matchMedia === 'function'
       && window.matchMedia('(prefers-color-scheme: light)').matches;
-
     this.setTheme(prefersLight ? 'light' : 'dark');
   }
 
@@ -54,94 +76,41 @@ export class App {
     this.setTheme(this.theme === 'dark' ? 'light' : 'dark');
   }
 
-  onSidebarMouseEnter() {
-    this.sidebarCollapsed = false;
-  }
-
-  onSidebarMouseLeave() {
-    this.sidebarCollapsed = true;
-  }
+  onSidebarMouseEnter(): void { this.sidebarCollapsed = false; }
+  onSidebarMouseLeave(): void { this.sidebarCollapsed = true; }
 
   isAdminRoute(): boolean {
     const url = this.router.url || '';
     return url.startsWith('/admin') || url.startsWith('/superadmin');
   }
 
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
+  isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
 
-  getCurrentUser() {
-    return this.authService.getCurrentUser();
-  }
+  getCurrentUser() { return this.authService.getCurrentUser(); }
 
-  getCurrentRole(): string {
-    return this.getCurrentUser()?.role || '';
-  }
+  getCurrentRole(): string { return this.getCurrentUser()?.role || ''; }
 
-  isAdmin(): boolean {
-    return this.getCurrentRole() === 'admin';
-  }
-
-  isSuperAdmin(): boolean {
-    return this.getCurrentRole() === 'superadmin';
-  }
-
-  isCustomer(): boolean {
-    return this.getCurrentRole() === 'customer';
-  }
-
-  // Home page is the Showroom; don't show the CTA there.
-  isShowroomRoute(): boolean {
-    const url = this.router.url || '';
-    return url === '/' || url.startsWith('/?');
-  }
-
-  logout() {
-    this.authService.logout();
-  }
+  logout(): void { this.authService.logout(); }
 
   getDashboardRoute(): string {
-    const role = this.getCurrentRole();
-    switch (role) {
-      case 'superadmin':
-        return '/superadmin/dashboard';
-      case 'admin':
-        return '/admin/dashboard';
-      case 'customer':
-        return '/customer/dashboard';
-      default:
-        return '/';
+    switch (this.getCurrentRole()) {
+      case 'superadmin': return '/superadmin/dashboard';
+      case 'admin':      return '/admin/dashboard';
+      case 'customer':   return '/customer/dashboard';
+      default:           return '/';
     }
   }
 
-  getSidebarDashboardRoute(): string {
-    const url = this.router.url || '';
-    if (url.startsWith('/admin')) return '/admin/dashboard';
-    if (url.startsWith('/superadmin')) return '/superadmin/dashboard';
-    return this.getDashboardRoute();
-  }
+  openSearch(): void  { this.searchOpen = true; }
+  closeSearch(): void { this.searchOpen = false; }
 
-  searchControl = new FormControl('', { nonNullable: true });
-  searchOpen = false;
-
-  searchResults$ = this.searchControl.valueChanges.pipe(
-    startWith(this.searchControl.value),
-    debounceTime(200),
-    distinctUntilChanged(),
-    switchMap((raw) => {
-      const q = (raw || '').trim();
-      if (q.length < 2) return of([]);
-      return this.apiService.searchProducts(q, 8).pipe(catchError(() => of([])));
-    })
-  );
-
-  openSearch(): void {
-    this.searchOpen = true;
-  }
-
-  closeSearch(): void {
-    this.searchOpen = false;
+  onSearchSubmit(): void {
+    const q = (this.searchControl.value || '').trim();
+    if (q) {
+      this.closeSearch();
+      this.searchControl.setValue('', { emitEvent: false });
+      this.router.navigate(['/'], { queryParams: { q } });
+    }
   }
 
   goToProduct(id: string): void {
@@ -149,5 +118,4 @@ export class App {
     this.searchControl.setValue('', { emitEvent: false });
     this.router.navigate(['/product', id]);
   }
-  
 }
