@@ -6,7 +6,7 @@ import { CartService } from './services/cart.service';
 import { ApiService } from './services/api.service';
 import { Toast } from './shared/toast/toast';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, startWith, switchMap, catchError, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, startWith, switchMap, catchError, of, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -30,8 +30,8 @@ export class App implements OnInit {
   private cartService = inject(CartService);
   private apiService = inject(ApiService);
 
-  /** Cart item count from signal */
-  cartCount = this.cartService.itemCount;
+  /** Cart item count from observable */
+  cartCount$ = this.cartService.items$.pipe(map(items => items.reduce((sum, item) => sum + item.quantity, 0)));
 
   /** Live search results */
   searchResults$ = this.searchControl.valueChanges.pipe(

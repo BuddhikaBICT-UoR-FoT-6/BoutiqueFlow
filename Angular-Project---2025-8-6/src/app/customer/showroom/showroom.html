@@ -86,8 +86,8 @@
     <section class="products-section container" aria-label="Products">
 
       <!-- Search result banner -->
-      <div class="search-result-banner" *ngIf="vm.searchQuery">
-        <p>Showing results for <strong>"{{vm.searchQuery}}"</strong></p>
+      <div class="search-result-banner" *ngIf="searchQuery">
+        <p>Showing results for <strong>"{{searchQuery}}"</strong></p>
         <a routerLink="/" class="btn-minimal">Clear search</a>
       </div>
 

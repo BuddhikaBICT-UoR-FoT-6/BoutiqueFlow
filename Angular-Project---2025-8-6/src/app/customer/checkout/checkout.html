@@ -23,7 +23,7 @@
 
         <div class="confirm-row id-row">
           <span>Order</span>
-          <strong class="order-id" title="{{ confirmation.orderId }}">#{{ confirmation.orderId?.slice(-8) }}</strong>
+          <strong class="order-id" title="{{ confirmation.orderId }}">#{{ confirmation.orderId.slice(-8) }}</strong>
         </div>
 
         <div class="confirm-row"><span>Total</span><strong>${{ confirmation.total | number : '1.2-2' }}</strong></div>

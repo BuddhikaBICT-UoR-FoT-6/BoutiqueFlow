@@ -68,8 +68,8 @@
           </a>
           <a routerLink="/cart" class="icon-btn cart-btn" title="Shopping Cart" aria-label="Shopping cart">
             <i class="fas fa-shopping-bag" aria-hidden="true"></i>
-            <span class="cart-count" *ngIf="cartCount() > 0" aria-label="{{cartCount()}} items in cart">
-              {{cartCount()}}
+            <span class="cart-count" *ngIf="(cartCount$ | async) as count" [attr.aria-label]="count + ' items in cart'">
+              {{count}}
             </span>
           </a>
           <button (click)="logout()" class="icon-btn" title="Log out" aria-label="Log out">
