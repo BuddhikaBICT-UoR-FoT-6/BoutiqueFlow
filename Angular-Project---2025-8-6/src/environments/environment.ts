@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://boutiqueflow-production-b30d.up.railway.app/api'
+    apiUrl: 'https://boutiqueflow-byhvbfe5bjgwfrb6.eastasia-01.azurewebsites.net/api'
 };
