@@ -1,11 +1,7 @@
 /*
-  Seed script for MongoDB Atlas.
-  - Inserts sample Users, Products, Inventory, Orders, Financials.
-  - Safe to re-run: it checks if collections already have data.
-
-  Run:
-    cd server
-    node seed.js
+  Seed script for MongoDB Atlas / Azure Cosmos DB.
+  - Generates 100 realistic Product records.
+  - Inserts sample Users, Inventory, Orders, Financials.
 */
 
 require('dotenv').config();
@@ -17,42 +13,101 @@ const Inventory = require('./models/inventory');
 const Order = require('./models/order');
 const Financial = require('./models/financial');
 
+const FASHION_IMAGES = [
+  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80',
+  'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800&q=80',
+  'https://images.unsplash.com/photo-1434389678369-182328d73b09?w=800&q=80',
+  'https://images.unsplash.com/photo-1485230405346-71acb9518d9c?w=800&q=80',
+  'https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=800&q=80',
+  'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=800&q=80',
+  'https://images.unsplash.com/photo-1618932260643-e4bc117a23c5?w=800&q=80',
+  'https://images.unsplash.com/photo-1542272604-780c8d197609?w=800&q=80',
+  'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&q=80',
+  'https://images.unsplash.com/photo-1591369822096-11440f935398?w=800&q=80',
+  'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80',
+  'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&q=80',
+  'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80',
+  'https://images.unsplash.com/photo-1520975954732-38dd512ba24e?w=800&q=80',
+  'https://images.unsplash.com/photo-1550614000-4b95d466f284?w=800&q=80',
+  'https://images.unsplash.com/photo-1489987707023-afc6a463c656?w=800&q=80'
+];
+
+const ADJECTIVES = ['Classic', 'Premium', 'Essential', 'Vintage', 'Modern', 'Minimalist', 'Cozy', 'Elegant', 'Urban', 'Relaxed', 'Signature', 'Tailored', 'Chic'];
+const COLORS = ['Black', 'White', 'Navy', 'Olive', 'Burgundy', 'Charcoal', 'Beige', 'Cream', 'Dusty Rose', 'Slate', 'Camel'];
+const CATEGORIES = [
+  { cat: 'Shirts', sub: ['T-Shirts', 'Blouses', 'Button-Downs'], names: ['Tee', 'Blouse', 'Shirt', 'Top'] },
+  { cat: 'Pants', sub: ['Jeans', 'Trousers', 'Chinos'], names: ['Jeans', 'Trousers', 'Chinos', 'Pants'] },
+  { cat: 'Dresses', sub: ['Casual', 'Formal', 'Summer'], names: ['Dress', 'Gown', 'Sundress', 'Wrap Dress'] },
+  { cat: 'Outerwear', sub: ['Jackets', 'Coats', 'Sweaters'], names: ['Jacket', 'Coat', 'Sweater', 'Cardigan'] },
+  { cat: 'Accessories', sub: ['Bags', 'Belts', 'Scarves'], names: ['Tote Bag', 'Belt', 'Scarf', 'Crossbody'] }
+];
+
+function randomEl(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generateProducts(count) {
+  const products = [];
+  for (let i = 0; i < count; i++) {
+    const categoryGroup = randomEl(CATEGORIES);
+    const category = categoryGroup.cat;
+    const sub_category = randomEl(categoryGroup.sub);
+    const baseName = randomEl(categoryGroup.names);
+    const adjective = randomEl(ADJECTIVES);
+    const color = randomEl(COLORS);
+    
+    // Add padded index to ensure unique names (e.g. Classic Black Jeans #042)
+    const name = `${adjective} ${color} ${baseName} #${(i + 1).toString().padStart(3, '0')}`;
+    const price = Math.floor(Math.random() * 120) + 20; // 20 to 139
+    const discount = Math.random() > 0.7 ? Math.floor(Math.random() * 20) + 5 : 0;
+    
+    products.push({
+      name,
+      description: `Experience ultimate comfort and style with our ${name.toLowerCase()}. Crafted from premium materials for a perfect fit, ideal for any occasion.`,
+      category,
+      sub_category,
+      price,
+      discount,
+      image: [randomEl(FASHION_IMAGES), randomEl(FASHION_IMAGES)],
+      sizes: ['S', 'M', 'L', 'XL'],
+      colors: [color],
+      tags: [category, adjective, 'Fashion', 'New'],
+      stock: {
+        S: Math.floor(Math.random() * 20),
+        M: Math.floor(Math.random() * 30),
+        L: Math.floor(Math.random() * 30),
+        XL: Math.floor(Math.random() * 15)
+      }
+    });
+  }
+  return products;
+}
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function main() {
-  // --- Connect to MongoDB using the same env var as server.js ---
   if (!process.env.MONGO_URI) {
     throw new Error('Missing MONGO_URI in server/.env');
   }
 
+  console.log('Connecting to database...');
   await mongoose.connect(process.env.MONGO_URI);
+  console.log('Connected.');
 
-  // --- Optional: wipe and reseed (use carefully!) ---
-  // Set SEED_RESET=true in server/.env to clear existing collections before seeding.
-  const seedReset = String(process.env.SEED_RESET || '').toLowerCase() === 'true';
-  if (seedReset) {
-    console.log('SEED_RESET=true → clearing collections before seeding...');
-    await Promise.all([
-      User.deleteMany({}),
-      Product.deleteMany({}),
-      Order.deleteMany({}),
-      Inventory.deleteMany({}),
-      Financial.deleteMany({})
-    ]);
-  }
-
-  // --- Exit early if DB already has seeded data (prevents duplicates) ---
-  // Note: we only skip when products/orders already exist.
-  const [productCount, orderCount] = await Promise.all([
-    Product.countDocuments(),
-    Order.countDocuments()
-  ]);
-
-  if (!seedReset && (productCount > 0 || orderCount > 0)) {
-    console.log('Seed skipped: products/orders already exist.');
-    console.log(`Counts: products=${productCount}, orders=${orderCount}`);
-    return;
-  }
+  console.log('Clearing old data via sequential deleteMany...');
+  try { await User.deleteMany({}); } catch (e) { console.log('User clear skip', e.message); }
+  await delay(1000);
+  try { await Product.deleteMany({}); } catch (e) { console.log('Product clear skip', e.message); }
+  await delay(1000);
+  try { await Order.deleteMany({}); } catch (e) { console.log('Order clear skip', e.message); }
+  await delay(1000);
+  try { await Inventory.deleteMany({}); } catch (e) { console.log('Inventory clear skip', e.message); }
+  await delay(1000);
+  try { await Financial.deleteMany({}); } catch (e) { console.log('Financial clear skip', e.message); }
+  await delay(1000);
 
   // --- Create Users ---
+  console.log('Creating users...');
   const [superadmin, admin, customer] = await User.insertMany([
     {
       role: 'superadmin',
@@ -80,74 +135,40 @@ async function main() {
     }
   ]);
 
-  // --- Create Products ---
-  const products = await Product.insertMany([
-    {
-      name: 'Classic Purple Tee',
-      description: 'Soft cotton tee in a rich purple tone.',
-      category: 'Shirts',
-      sub_category: 'T-Shirts',
-      price: 25,
-      discount: 0,
-      image: ['https://picsum.photos/seed/purpletee/800/800'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      colors: ['Purple'],
-      stock: { S: 8, M: 10, L: 6, XL: 4 }
-    },
-    {
-      name: 'Everyday Black Jeans',
-      description: 'Comfort stretch jeans for daily wear.',
-      category: 'Pants',
-      sub_category: 'Jeans',
-      price: 55,
-      discount: 10,
-      image: ['https://picsum.photos/seed/blackjeans/800/800'],
-      sizes: ['S', 'M', 'L', 'XL'],
-      colors: ['Black'],
-      stock: { S: 5, M: 7, L: 7, XL: 3 }
-    },
-    {
-      name: 'Summer Dress',
-      description: 'Lightweight dress perfect for warm days.',
-      category: 'Dresses',
-      sub_category: 'Casual',
-      price: 65,
-      discount: 0,
-      image: ['https://picsum.photos/seed/summerdress/800/800'],
-      sizes: ['S', 'M', 'L'],
-      colors: ['Floral'],
-      stock: { S: 4, M: 6, L: 2, XL: 0 }
-    },
-    {
-      name: 'Leather Belt',
-      description: 'Genuine leather belt with metal buckle.',
-      category: 'Accessories',
-      sub_category: 'Belts',
-      price: 30,
-      discount: 0,
-      image: ['https://picsum.photos/seed/leatherbelt/800/800'],
-      sizes: ['M', 'L', 'XL'],
-      colors: ['Brown'],
-      stock: { S: 0, M: 12, L: 12, XL: 8 }
-    }
-  ]);
+  // --- Create Products one by one to avoid Cosmos DB RU limit ---
+  console.log('Generating and inserting 100 products one by one...');
+  const productData = generateProducts(100);
+  const products = [];
+  
+  for (let i = 0; i < productData.length; i++) {
+    const inserted = await Product.create(productData[i]);
+    products.push(inserted);
+    if ((i + 1) % 10 === 0) console.log(`Inserted ${i + 1} products...`);
+    await delay(300); // Wait 300ms between each insert to stay well under 1000 RU/s
+  }
 
-  // --- Create Inventory rows (links to Product) ---
-  await Inventory.insertMany(
-    products.map((p) => ({
-      product_id: p._id,
-      stock_by_size: {
-        S: p.stock?.S ?? 0,
-        M: p.stock?.M ?? 0,
-        L: p.stock?.L ?? 0,
-        XL: p.stock?.XL ?? 0
-      },
-      supplier: 'Demo Supplier',
-      supplier_email: ''
-    }))
-  );
+  // --- Create Inventory rows one by one ---
+  console.log('Inserting inventory records one by one...');
+  const inventoryData = products.map((p) => ({
+    product_id: p._id,
+    stock_by_size: {
+      S: p.stock?.S ?? 0,
+      M: p.stock?.M ?? 0,
+      L: p.stock?.L ?? 0,
+      XL: p.stock?.XL ?? 0
+    },
+    supplier: 'BoutiqueFlow Wholesale',
+    supplier_email: 'wholesale@boutiqueflow.com'
+  }));
+
+  for (let i = 0; i < inventoryData.length; i++) {
+    await Inventory.create(inventoryData[i]);
+    if ((i + 1) % 10 === 0) console.log(`Inserted ${i + 1} inventory rows...`);
+    await delay(300);
+  }
 
   // --- Create a sample Order for the customer ---
+  console.log('Creating sample orders...');
   const order = await Order.create({
     user_id: customer._id,
     items: [
@@ -155,7 +176,7 @@ async function main() {
         product_id: products[0]._id,
         name: products[0].name,
         size: 'M',
-        color: 'Purple',
+        color: products[0].colors[0],
         quantity: 2,
         price: products[0].price
       },
@@ -163,7 +184,7 @@ async function main() {
         product_id: products[3]._id,
         name: products[3].name,
         size: 'L',
-        color: 'Brown',
+        color: products[3].colors[0],
         quantity: 1,
         price: products[3].price
       }
@@ -183,8 +204,8 @@ async function main() {
     notes: 'Seed transaction'
   });
 
-  console.log('✅ Seed complete');
-  console.log(`Users: 3, Products: ${products.length}, Orders: 1, Inventory: ${products.length}, Financials: 1`);
+  console.log('✅ Seed complete!');
+  console.log(`Users: 3, Products: ${products.length}, Inventory: ${products.length}, Orders: 1, Financials: 1`);
   console.log('Demo logins:');
   console.log('  superadmin@demo.com / 123456');
   console.log('  admin@demo.com / 123456');
